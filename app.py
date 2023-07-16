@@ -19,7 +19,7 @@ def recommend_songs_based_on_lyric(filtered_df, similarities, song_name, count):
         song_recos.append(filtered_df.at[song_index, 'name'])
     return song_recos
 
-def filter_df_for_song(song_name, genre, mood):
+def filter_df_for_song(song_name, genre, mood, decade):
     row_record = df[df['name']==song_name].to_dict('records')[0]
     cluster_df = df[df['cluster'] == row_record['cluster']].reset_index(drop=True)
     filtered_df = cluster_df
@@ -28,6 +28,24 @@ def filter_df_for_song(song_name, genre, mood):
         filtered_df = filtered_df[mask]
     if mood:
         filtered_df = filtered_df[filtered_df['mood']==mood]
+    if decade:
+        if decade == '1950s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '1950-01-01') & (df['release_date'] < '1960-01-01')]
+        elif decade == '1960s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '1960-01-01') & (df['release_date'] < '1970-01-01')]
+        elif decade == '1970s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '1970-01-01') & (df['release_date'] < '1980-01-01')]
+        elif decade == '1980s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '1980-01-01') & (df['release_date'] < '1990-01-01')]
+        elif decade == '1990s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '1990-01-01') & (df['release_date'] < '2000-01-01')]
+        elif decade == '2000s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '2000-01-01') & (df['release_date'] < '2010-01-01')]
+        elif decade == '2010s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '2010-01-01') & (df['release_date'] < '2020-01-01')]
+        elif decade == '2020s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '2020-01-01')]
+
     #Incase filtered df dones't contains the row any more, add it back
     if (filtered_df['name']==song_name).any() == False:
         filtered_df = pd.concat([filtered_df, pd.DataFrame([row_record])], ignore_index=True)
@@ -58,11 +76,14 @@ def get_response_for_action(action, parameters):
         song_name = parameters['song']
         genre = None
         mood = None
+        decade = None
         if genre in parameters:
             genre = parameters['genre']
         if mood in parameters:
             mood = parameters['mood']
-        filtered_df = filter_df_for_song(song_name, genre, mood)
+        if decade in parameters:
+            decade = parameters['decade']
+        filtered_df = filter_df_for_song(song_name, genre, mood, '2020s')
         similiarities = calcualte_similarities(filtered_df)
         song_recos = recommend_songs_based_on_lyric(filtered_df, similiarities, song_name, 10)
         if len(song_recos) == 0:
