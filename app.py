@@ -28,7 +28,11 @@ def filter_df_for_song(reco_df, song_name, genre, mood, decade):
     if mood:
         filtered_df = filtered_df[filtered_df['mood']==mood]
     if decade:
-        if decade == '1950s':
+        if decade == '1930s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '1930-01-01') & (df['release_date'] < '1940-01-01')]
+        elif decade == '1940s':
+                filtered_df = filtered_df.loc[(df['release_date'] >= '1940-01-01') & (df['release_date'] < '1950-01-01')]
+        elif decade == '1950s':
                 filtered_df = filtered_df.loc[(df['release_date'] >= '1950-01-01') & (df['release_date'] < '1960-01-01')]
         elif decade == '1960s':
                 filtered_df = filtered_df.loc[(df['release_date'] >= '1960-01-01') & (df['release_date'] < '1970-01-01')]
