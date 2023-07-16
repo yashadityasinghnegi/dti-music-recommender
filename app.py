@@ -19,6 +19,9 @@ def recommend_songs_based_on_lyric(song_name, count):
 def filter_df_for_song(reco_df, song_name, genre, mood, decade):
     # row_record = df[df['name']==song_name].to_dict('records')[0]
     filtered_df = reco_df
+    print("top of filter - Recommendation based on genre:  " + str(genre))
+    print("top of filter - Recommendation based on mood:   " + str(mood))
+    print("top of filter - Recommendation based on decade: " + str(decade))
     if genre:
         mask = filtered_df['Genres'].apply(lambda x: genre in x)
         filtered_df = filtered_df[mask]
@@ -73,11 +76,12 @@ def get_response_for_action(action, parameters):
     genre = None
     mood = None
     decade = None
-    if genre in parameters:
+    print("parameters: " + str(parameters))
+    if parameters['genre']:
         genre = parameters['genre']
-    if mood in parameters:
+    if parameters['mood']:
         mood = parameters['mood']
-    if decade in parameters:
+    if parameters['decade']:
         decade = parameters['decade']
     #find top 300 recos in the cluster
     reco_df = recommend_songs_based_on_lyric(song_name, 300)
