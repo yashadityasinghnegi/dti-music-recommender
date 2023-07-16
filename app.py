@@ -5,24 +5,20 @@ import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-def recommend_songs_based_on_lyric(filtered_df, similarities, song_name, count):
-    idx = filtered_df[filtered_df['name']==song_name].index.tolist()[0]
-
-    sim_scores = list(enumerate(similarities[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-
-    sim_scores = sim_scores[1:(count+1)]
-    song_indcies = [i[0] for i in sim_scores]
-    song_recos = []
-    for song_index in song_indcies:
-        print(filtered_df.at[song_index, 'name'])
-        song_recos.append(filtered_df.at[song_index, 'name'])
-    return song_recos
-
-def filter_df_for_song(song_name, genre, mood, decade):
+def recommend_songs_based_on_lyric(song_name, count):
     row_record = df[df['name']==song_name].to_dict('records')[0]
     cluster_df = df[df['cluster'] == row_record['cluster']].reset_index(drop=True)
-    filtered_df = cluster_df
+    similiarities = calcualte_similarities(cluster_df)
+    idx = cluster_df[cluster_df['name']==song_name].index.tolist()[0]
+    sim_scores = list(enumerate(similiarities[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sim_scores[1:(count+1)]
+    song_indcies = [i[0] for i in sim_scores]
+    return cluster_df.iloc[song_indcies].reset_index(drop=True)
+
+def filter_df_for_song(reco_df, song_name, genre, mood, decade):
+    # row_record = df[df['name']==song_name].to_dict('records')[0]
+    filtered_df = reco_df
     if genre:
         mask = filtered_df['Genres'].apply(lambda x: genre in x)
         filtered_df = filtered_df[mask]
@@ -47,8 +43,8 @@ def filter_df_for_song(song_name, genre, mood, decade):
                 filtered_df = filtered_df.loc[(df['release_date'] >= '2020-01-01')]
 
     #Incase filtered df dones't contains the row any more, add it back
-    if (filtered_df['name']==song_name).any() == False:
-        filtered_df = pd.concat([filtered_df, pd.DataFrame([row_record])], ignore_index=True)
+    # if (filtered_df['name']==song_name).any() == False:
+        # filtered_df = pd.concat([filtered_df, pd.DataFrame([row_record])], ignore_index=True)
     return filtered_df.reset_index(drop=True)
 
 def calcualte_similarities(filtered_df):
@@ -72,21 +68,31 @@ def webhooks():
     }
 
 def get_response_for_action(action, parameters):
-    if action == 'recommend-similar-songs':
-        song_name = parameters['song']
-        genre = None
-        mood = None
-        decade = None
-        if genre in parameters:
-            genre = parameters['genre']
-        if mood in parameters:
-            mood = parameters['mood']
-        if decade in parameters:
-            decade = parameters['decade']
-        filtered_df = filter_df_for_song(song_name, genre, mood, '2020s')
-        similiarities = calcualte_similarities(filtered_df)
-        song_recos = recommend_songs_based_on_lyric(filtered_df, similiarities, song_name, 10)
-        if len(song_recos) == 0:
-            return f'I can not find any song like ${song_name}. Can you try another song?'
-        return 'Here are some songs you may like: ' + ', '.join(song_recos)
-    return 'Sorry, I can not understand you. Can you say again?'
+    # if action == 'recommend-similar-songs':
+    song_name = parameters['song']
+    genre = None
+    mood = None
+    decade = None
+    if genre in parameters:
+        genre = parameters['genre']
+    if mood in parameters:
+        mood = parameters['mood']
+    if decade in parameters:
+        decade = parameters['decade']
+    #find top 300 recos in the cluster
+    reco_df = recommend_songs_based_on_lyric(song_name, 300)
+    print("Recommendation size: " + str(reco_df.shape[0]))
+    #filter based on the requested attributes
+    filtered_df = filter_df_for_song(reco_df, song_name, genre, mood, decade)
+    print("Filtered Recommendation size: " + str(filtered_df.shape[0]))
+    #sort by popurialtiy and return top 5
+    filtered_df = filtered_df.sort_values(by=['popularity'], ascending=False)
+    #return top 5 songs
+    song_recos = []
+    reco_number = 5
+    for index, row in filtered_df.head(reco_number).iterrows():
+        print(row['name'])
+        song_recos.append(row['name'])
+    if len(song_recos) == 0:
+        return f'I can not find any song like {song_name}. Can you try another song?'
+    return 'Here are some songs you may like: ' + ', '.join(song_recos)
