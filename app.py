@@ -19,13 +19,15 @@ def recommend_songs_based_on_lyric(filtered_df, similarities, song_name, count):
         song_recos.append(filtered_df.at[song_index, 'name'])
     return song_recos
 
-def filter_df_for_song(song_name, genre):
+def filter_df_for_song(song_name, genre, mood):
     row_record = df[df['name']==song_name].to_dict('records')[0]
     cluster_df = df[df['cluster'] == row_record['cluster']].reset_index(drop=True)
     filtered_df = cluster_df
-    if genre is not None:
+    if genre:
         mask = filtered_df['Genres'].apply(lambda x: genre in x)
         filtered_df = filtered_df[mask]
+    if mood:
+        filtered_df = filtered_df[filtered_df['mood']==mood]
     #Incase filtered df dones't contains the row any more, add it back
     if (filtered_df['name']==song_name).any() == False:
         filtered_df = pd.concat([filtered_df, pd.DataFrame([row_record])], ignore_index=True)
@@ -55,10 +57,15 @@ def get_response_for_action(action, parameters):
     if action == 'recommend-similar-songs':
         song_name = parameters['song']
         genre = None
+        mood = None
         if genre in parameters:
             genre = parameters['genre']
-        filtered_df = filter_df_for_song(song_name, genre)
+        if mood in parameters:
+            mood = parameters['mood']
+        filtered_df = filter_df_for_song(song_name, genre, mood)
         similiarities = calcualte_similarities(filtered_df)
         song_recos = recommend_songs_based_on_lyric(filtered_df, similiarities, song_name, 10)
-        return 'Here are some songs you may like: ' + ','.join(song_recos)
-    return 'Sorry, nothing found'
+        if len(song_recos) == 0:
+            return f'I can not find any song like ${song_name}. Can you try another song?'
+        return 'Here are some songs you may like: ' + ', '.join(song_recos)
+    return 'Sorry, I can not understand you. Can you say again?'
