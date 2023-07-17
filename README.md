@@ -1,6 +1,6 @@
 # Music Recommender
 The music reommendation system recommends users the similar songs based on the requested song, genre, current mood, and the era interested.
-The system work with Google Dialogflow to provide the chat interface for users.
+The system provide the chat interface implemented in Google Dialogflow for users to communicate by the nature languages.
 
 ### Envrionment Setup
 1. Data Preperation - Optional
