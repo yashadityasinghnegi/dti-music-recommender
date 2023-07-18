@@ -128,4 +128,4 @@ def get_response_for_action(action, parameters):
     if decade:
         response_text += f' from {decade}'
     response_text += ' you may like:'
-    return f'{response_text}: ' + ', '.join(song_recos)
+    return f'{response_text} ' + ', '.join(song_recos)
