@@ -60,7 +60,7 @@ def calcualte_similarities(filtered_df):
     cosine_sim = cosine_similarity(tsm, tsm)
     return cosine_sim
 
-df = pd.read_csv('df_comb_v5_clustered.csv')
+df = pd.read_csv('df_comb_clustered.csv')
 app = Flask(__name__)
 
 @app.route("/webhooks", methods=['GET', 'POST'])
