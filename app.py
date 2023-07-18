@@ -35,25 +35,25 @@ def filter_df_for_song(reco_df, song_name, genre, mood, decade):
         filtered_df = filtered_df[filtered_df['mood']==mood]
     if decade:
         if decade == '1930s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '1930-01-01') & (df['release_date'] < '1940-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '1930-01-01') & (filtered_df['release_date'] < '1940-01-01')]
         elif decade == '1940s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '1940-01-01') & (df['release_date'] < '1950-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '1940-01-01') & (filtered_df['release_date'] < '1950-01-01')]
         elif decade == '1950s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '1950-01-01') & (df['release_date'] < '1960-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '1950-01-01') & (filtered_df['release_date'] < '1960-01-01')]
         elif decade == '1960s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '1960-01-01') & (df['release_date'] < '1970-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '1960-01-01') & (filtered_df['release_date'] < '1970-01-01')]
         elif decade == '1970s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '1970-01-01') & (df['release_date'] < '1980-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '1970-01-01') & (filtered_df['release_date'] < '1980-01-01')]
         elif decade == '1980s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '1980-01-01') & (df['release_date'] < '1990-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '1980-01-01') & (filtered_df['release_date'] < '1990-01-01')]
         elif decade == '1990s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '1990-01-01') & (df['release_date'] < '2000-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '1990-01-01') & (filtered_df['release_date'] < '2000-01-01')]
         elif decade == '2000s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '2000-01-01') & (df['release_date'] < '2010-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '2000-01-01') & (filtered_df['release_date'] < '2010-01-01')]
         elif decade == '2010s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '2010-01-01') & (df['release_date'] < '2020-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '2010-01-01') & (filtered_df['release_date'] < '2020-01-01')]
         elif decade == '2020s':
-                filtered_df = filtered_df.loc[(df['release_date'] >= '2020-01-01')]
+            filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '2020-01-01')]
 
     #Incase filtered df dones't contains the row any more, add it back
     # if (filtered_df['name']==song_name).any() == False:
@@ -111,19 +111,21 @@ def get_response_for_action(action, parameters):
     song_recos = []
     reco_number = 5
     for index, row in filtered_df.head(reco_number).iterrows():
-        print(row['name'])
+        print(row)
+        print("-----------------------------------------------")
         song_recos.append(row['name'] + ' by ' + row['artists'])
     if len(song_recos) == 0:
         return f'I can not find any song like {song_name}. Can you try another song?'
     response_text = f'Giving you like {song_name}'
-    if decade:
-        response_text += f' from the {decade}'
     if artist:
         response_text += f' by {artist}'
     if mood:
-        response_text += f', and you are feeling {mood}'
+        response_text += f', and you are feeling {mood}.'
+    response_text += ' .Here are some'
     if genre:
-        response_text += f'. Here are some {genre} songs you may like:'
-    else:
-        response_text += '. Here are some songs you may like:'
+        response_text += f' {genre}'
+    response_text += ' songs'
+    if decade:
+        response_text += f' from {decade}'
+    response_text += ' you may like:'
     return f'{response_text}: ' + ', '.join(song_recos)
