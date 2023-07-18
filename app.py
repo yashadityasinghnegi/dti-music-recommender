@@ -5,8 +5,14 @@ import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-def recommend_songs_based_on_lyric(song_name, count):
-    row_record = df[df['name']==song_name].to_dict('records')[0]
+def recommend_songs_based_on_lyric(song_name, artist, count):
+    row_df = df[df['name']==song_name]
+    if artist:
+        mask = row_df['artists'].apply(lambda x: artist in x)
+        row_df = row_df[mask]
+    if row_df.shape[0]==0:
+        raise Exception('Artist/song pair not found')
+    row_record = row_df.to_dict('records')[0]
     cluster_df = df[df['cluster'] == row_record['cluster']].reset_index(drop=True)
     similiarities = calcualte_similarities(cluster_df)
     idx = cluster_df[cluster_df['name']==song_name].index.tolist()[0]
@@ -77,10 +83,13 @@ def webhooks():
 def get_response_for_action(action, parameters):
     # if action == 'recommend-similar-songs':
     song_name = parameters['song']
+    artist = None
     genre = None
     mood = None
     decade = None
     print("parameters: " + str(parameters))
+    if parameters['artist']:
+        artist = parameters['artist']
     if parameters['genre']:
         genre = parameters['genre']
     if parameters['mood']:
@@ -88,7 +97,10 @@ def get_response_for_action(action, parameters):
     if parameters['decade']:
         decade = parameters['decade']
     #find top 300 recos in the cluster
-    reco_df = recommend_songs_based_on_lyric(song_name, 300)
+    try:
+        reco_df = recommend_songs_based_on_lyric(song_name, artist, 300)
+    except Exception:
+        return f'Sorry, I can not find the song {song_name} by {artist}'
     print("Recommendation size: " + str(reco_df.shape[0]))
     #filter based on the requested attributes
     filtered_df = filter_df_for_song(reco_df, song_name, genre, mood, decade)
@@ -100,7 +112,18 @@ def get_response_for_action(action, parameters):
     reco_number = 5
     for index, row in filtered_df.head(reco_number).iterrows():
         print(row['name'])
-        song_recos.append(row['name'])
+        song_recos.append(row['name'] + ' by ' + row['artists'])
     if len(song_recos) == 0:
         return f'I can not find any song like {song_name}. Can you try another song?'
-    return 'Here are some songs you may like: ' + ', '.join(song_recos)
+    response_text = f'Giving you like {song_name}'
+    if decade:
+        response_text += f' from the {decade}'
+    if artist:
+        response_text += f' by {artist}'
+    if mood:
+        response_text += f', and you are feeling {mood}'
+    if genre:
+        response_text += f'. Here are some {genre} songs you may like:'
+    else:
+        response_text += '. Here are some songs you may like:'
+    return f'{response_text}: ' + ', '.join(song_recos)
