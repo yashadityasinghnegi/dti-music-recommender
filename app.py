@@ -32,7 +32,7 @@ def filter_df_for_song(reco_df, song_name, genre, mood, decade):
         mask = filtered_df['Genres'].apply(lambda x: genre in x)
         filtered_df = filtered_df[mask]
     if mood:
-        filtered_df = filtered_df[filtered_df['mood']==mood]
+        filtered_df = filtered_df[filtered_df['Mood']==mood]
     if decade:
         if decade == '1930s':
             filtered_df = filtered_df.loc[(filtered_df['release_date'] >= '1930-01-01') & (filtered_df['release_date'] < '1940-01-01')]
