@@ -108,8 +108,6 @@ def get_response_for_action(action, parameters):
     #filter based on the requested attributes
     filtered_df = filter_df_for_song(reco_df, song_name, genre, mood, decade)
     print("Filtered Recommendation size: " + str(filtered_df.shape[0]))
-    #sort by popurialtiy and return top 5
-    filtered_df = filtered_df.sort_values(by=['popularity'], ascending=False)
     #return top 5 songs
     song_recos = []
     reco_number = 5
