@@ -96,7 +96,7 @@ def get_response_for_action(action, parameters):
         mood = parameters['mood']
     if parameters['decade']:
         decade = parameters['decade']
-    #find top 300 (or 30 with no filters) recos in the cluster
+    #find top 300 recos in the cluster
     try:
         reco_df = recommend_songs_based_on_lyric(song_name, artist, searchSize)
     except Exception:
