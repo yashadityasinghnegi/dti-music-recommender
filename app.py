@@ -81,7 +81,10 @@ def webhooks():
     }
 
 def get_response_for_action(action, parameters):
-    # if action == 'recommend-similar-songs':
+    if action == 'recommendsong.none':
+        searchSize = 30
+    else:
+        searchSize = 300
     song_name = parameters['song']
     artist = None
     genre = None
@@ -96,9 +99,9 @@ def get_response_for_action(action, parameters):
         mood = parameters['mood']
     if parameters['decade']:
         decade = parameters['decade']
-    #find top 300 recos in the cluster
+    #find top 300 (or 30 with no filters) recos in the cluster
     try:
-        reco_df = recommend_songs_based_on_lyric(song_name, artist, 300)
+        reco_df = recommend_songs_based_on_lyric(song_name, artist, searchSize)
     except Exception:
         return f'Sorry, I can not find the song {song_name} by {artist}'
     print("Recommendation size: " + str(reco_df.shape[0]))
