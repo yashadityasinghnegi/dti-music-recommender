@@ -81,10 +81,7 @@ def webhooks():
     }
 
 def get_response_for_action(action, parameters):
-    if action == 'recommendsong.none':
-        searchSize = 30
-    else:
-        searchSize = 300
+    searchSize = 300
     song_name = parameters['song']
     artist = None
     genre = None
