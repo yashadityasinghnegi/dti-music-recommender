@@ -25,3 +25,5 @@ To start the server, navigate to the root directory, run `flask run`.
 5. **Host local Flask Server on Ngrok**. Install ngrok, and in terminal run `ngrok http http://127.0.0.1:5000`.
 
 6. **Setup Dialogflow agent**. Import the agent with the backup zip. Go to Fulfillment and update the Webhook URL to the ngrok address ie. `https://f30b-74-15-253-93.ngrok.io/webhooks`.
+
+7. **Classification comparison**. The classification algorithms and their results/accuracies can be compared by running this notebook after the above steps (separate from dialogFlow fulfillment) 
