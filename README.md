@@ -26,4 +26,4 @@ To start the server, navigate to the root directory, run `flask run`.
 
 6. **Setup Dialogflow agent**. Import the agent with the backup zip. Go to Fulfillment and update the Webhook URL to the ngrok address ie. `https://f30b-74-15-253-93.ngrok.io/webhooks`.
 
-7. **Classification comparison**. The classification algorithms and their results/accuracies can be compared by running [classification_comparison.ipynb](https://github.com/liaohaozhi/dti-music-recommender/blob/main/classification_comparison.ipynb) after the above steps (separate from dialogFlow fulfillment) 
+7. **Classification comparison**. The classification algorithms and their results/accuracies can be compared by running [classification_comparison.ipynb](https://github.com/liaohaozhi/dti-music-recommender/blob/main/classification_compare.ipynb) after the above steps (separate from dialogFlow fulfillment) 
