@@ -6,7 +6,6 @@ The system provide the chat interface implemented in Google Dialogflow for users
 0. **Data set sources**
    
    [Genres and Lyrics](https://www.kaggle.com/datasets/neisse/scrapped-lyrics-from-6-genres?select=artists-data.csv)
-   
    [Music features](https://www.kaggle.com/datasets/yamaerenay/spotify-dataset-19212020-600k-tracks?select=tracks.csv)
 
 1. **Data Preperation - Optional**. This step can be skipped as the source datasets are too large to be uploaded in the repo. The output dataset [df_comb.csv](https://github.com/liaohaozhi/dti-music-recommender/blob/main/df_comb.csv) is uploaded in the git.
